@@ -1,146 +1,681 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-  <base href="$FLUTTER_BASE_HREF">
-
-  <meta charset="UTF-8">
-  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="Flet application.">
-
-  <!-- iOS meta tags & icons -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Flet">
-  <link rel="apple-touch-icon" href="icons/apple-touch-icon-192.png">
-
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png" />
-
-  <title>Flet</title>
-  <link rel="manifest" href="manifest.json">
-
-  <script>
-    var flet = {
-      pyodide: false,
-      multiView: false,
-      noCdn: false,
-      webSocketEndpoint: "/ws",
-      entrypointBaseUrl: "/",
-      assetBase: "/",
-      routeUrlStrategy: "path",
-      canvasKitBaseUrl: "/canvaskit/",
-      pyodideUrl: "/pyodide/pyodide.js",
-      webRenderer: "auto",
-      fontFallbackBaseUrl: "assets/fonts/", // for Noto Emoji, use Google CDN
-      appPackageUrl: "app.tar.gz"
-    }
-
-    flet.flutterAppLoaded = new Promise((resolve) => {
-      flet.flutterAppResolve = resolve;
-    });
-
-    flet.flutterAppLoaded.then((flutterApp) => {
-      console.log("Flutter app loaded");
-      if (flet.multiView) {
-        console.log(flutterApp.addView({
-          hostElement: document.querySelector('#view-1'),
-          initialData: {
-            script: 'print("Hello from view 1")',
-            randomValue: Math.floor(Math.random() * 100),
-          },
-          viewConstraints: {
-            //maxWidth: Infinity,
-            maxHeight: Infinity,
-            minHeight: 300,
-            minWidth: 620
-          }
-        }));
-        console.log(flutterApp.addView({
-          hostElement: document.querySelector('#view-2'),
-          initialData: {
-            script: 'print("Hello from view 2")',
-            bar: "baz"
-          },
-          viewConstraints: {
-            minWidth: 620,
-            //maxWidth: 320,
-            //minHeight: 400,
-            maxHeight: 400,
-          }
-        }));
-      }
-    });
-  </script>
-
-  <!-- fletAppConfig -->
-
-  <script src="python.js"></script>
-</head>
-
-<body>
-  <div id="loading">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuminaLib | Premium Library Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-      body {
-        inset: 0;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        position: fixed;
-      }
-
-      #loading {
-        align-items: center;
-        display: flex;
-        height: 100%;
-        justify-content: center;
-        width: 100%;
-      }
-
-      #loading img {
-        animation: 1s ease-in-out 0s infinite alternate breathe;
-        opacity: .66;
-        transition: opacity .4s;
-      }
-
-      #loading.main_done img {
-        opacity: 1;
-      }
-
-      #loading.init_done img {
-        animation: .33s ease-in-out 0s 1 forwards zooooom;
-        opacity: .05;
-      }
-
-      @keyframes breathe {
-        from {
-          transform: scale(0.4);
-          opacity: 1.0;
+        :root {
+            --primary-soft: #f0f7ff;
+            --accent-blue: #3b82f6;
+            --accent-pastel: #e0e7ff;
         }
 
-        to {
-          transform: scale(0.35);
-          opacity: .7;
-        }
-      }
-
-      @keyframes zooooom {
-        from {
-          transform: scale(0.4)
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            overflow-x: hidden;
         }
 
-        to {
-          transform: scale(10)
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+        /* Animations & Transitions */
+        .page-section { display: none; }
+        .page-section.active { display: block; animation: fadeIn 0.6s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-      }
+
+        .sidebar-link.active {
+            background-color: white;
+            color: var(--accent-blue);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Step Slider */
+        .step-container { display: none; }
+        .step-container.active { display: block; animation: slideIn 0.4s forwards; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Branding Glow */
+        .crown-glow {
+            animation: glow 2.5s infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 2px #fff, 0 0 5px #ffd700; }
+            to { text-shadow: 0 0 5px #fff, 0 0 15px #ffb700; }
+        }
+
+        /* Toast Styles */
+        #toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
     </style>
-    <img src="icons/loading-animation.png" alt="Loading..." />
-  </div>
-  <script src="flutter_bootstrap.js" async></script>
+</head>
+<body class="text-slate-800">
 
-  <!-- <h1>View 1</h1>
-  <div id="view-1" style="display: flex; justify-content: center;"></div>
-  <h1>View 2</h1>
-  <div id="view-2"></div> -->
+    <div id="toast-container"></div>
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <aside class="w-64 bg-slate-50 border-r border-slate-200 hidden md:flex flex-col p-6">
+            <div class="flex items-center gap-3 mb-10 px-2">
+                <div class="bg-blue-600 p-2 rounded-lg text-white">
+                    <i class="fas fa-book-open"></i>
+                </div>
+                <h1 class="font-bold text-xl tracking-tight">LuminaLib</h1>
+            </div>
+
+            <nav class="space-y-2 flex-grow">
+                <a href="#" onclick="showSection('dashboard')" id="nav-dashboard" class="sidebar-link active flex items-center gap-3 px-4 py-3 text-slate-600 transition-all">
+                    <i class="fas fa-chart-pie w-5"></i> Dashboard
+                </a>
+                <a href="#" onclick="showSection('add-book')" id="nav-add-book" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all">
+                    <i class="fas fa-plus-circle w-5"></i> Add New Book
+                </a>
+                <a href="#" onclick="showSection('issue-book')" id="nav-issue-book" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all">
+                    <i class="fas fa-hand-holding-heart w-5"></i> Issue Book
+                </a>
+                <a href="#" onclick="showSection('records')" id="nav-records" class="sidebar-link flex items-center gap-3 px-4 py-3 text-slate-600 transition-all">
+                    <i class="fas fa-database w-5"></i> Library Records
+                </a>
+            </nav>
+
+            <div class="mt-auto pt-6 border-t border-slate-200">
+                <div class="flex items-center gap-2 text-sm font-semibold text-slate-500">
+                    <span>MADE BY ISUF</span>
+                    <span class="crown-glow text-yellow-500 text-lg">👑</span>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col h-full overflow-y-auto bg-[#F8FAFC]">
+            
+            <header class="h-16 bg-white/80 backdrop-blur-md border-b border-slate-100 flex items-center justify-between px-8 sticky top-0 z-40">
+                <h2 id="section-title" class="text-lg font-bold text-slate-700 uppercase tracking-wider text-xs">Dashboard</h2>
+                <div class="flex items-center gap-4">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-bold text-slate-700">Administrator</p>
+                        <p class="text-xs text-slate-400">Main Branch</p>
+                    </div>
+                    <div class="w-10 h-10 bg-pastel-blue rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </div>
+            </header>
+
+            <div class="p-8">
+                
+                <section id="dashboard" class="page-section active">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+                        <div class="glass-card card-hover p-6 rounded-2xl bg-white shadow-sm flex items-center gap-5 border-l-4 border-blue-500">
+                            <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center text-blue-500 text-2xl">
+                                <i class="fas fa-books"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Total Books</p>
+                                <h3 id="stat-total-books" class="text-3xl font-bold">0</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card card-hover p-6 rounded-2xl bg-white shadow-sm flex items-center gap-5 border-l-4 border-orange-400">
+                            <div class="w-14 h-14 bg-orange-50 rounded-xl flex items-center justify-center text-orange-400 text-2xl">
+                                <i class="fas fa-user-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Issued Books</p>
+                                <h3 id="stat-issued-books" class="text-3xl font-bold">0</h3>
+                            </div>
+                        </div>
+                        <div class="glass-card card-hover p-6 rounded-2xl bg-white shadow-sm flex items-center gap-5 border-l-4 border-green-400">
+                            <div class="w-14 h-14 bg-green-50 rounded-xl flex items-center justify-center text-green-400 text-2xl">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <p class="text-slate-500 text-sm font-medium">Available</p>
+                                <h3 id="stat-available-books" class="text-3xl font-bold">0</h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-10 text-white relative overflow-hidden shadow-xl">
+                        <div class="relative z-10 max-w-lg">
+                            <h2 class="text-3xl font-bold mb-4">Welcome back to Lumina Library Management</h2>
+                            <p class="text-blue-100 mb-6">Manage your digital collection effortlessly. Add new inventory, track issued books, and maintain student records with ease.</p>
+                            <button onclick="showSection('add-book')" class="bg-white text-blue-600 px-6 py-3 rounded-xl font-bold hover:shadow-lg transition-all active:scale-95">
+                                <i class="fas fa-plus mr-2"></i> Register New Book
+                            </button>
+                        </div>
+                        <div class="absolute -right-20 -top-20 w-80 h-80 bg-white/10 rounded-full"></div>
+                        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full"></div>
+                    </div>
+                </section>
+
+                <section id="add-book" class="page-section max-w-2xl mx-auto">
+                    <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100">
+                        <div class="text-center mb-8">
+                            <h3 class="text-2xl font-bold">Register New Book</h3>
+                            <p class="text-slate-400">Fill in the details to add a book to the database</p>
+                        </div>
+                        
+                        <form id="add-book-form" class="space-y-6">
+                            <div class="flex flex-col items-center mb-6">
+                                <label class="w-32 h-32 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center cursor-pointer hover:border-blue-400 transition-all overflow-hidden relative">
+                                    <input type="file" accept="image/*" capture="environment" id="book-image" class="hidden" onchange="previewImage(event)">
+                                    <div id="preview-placeholder" class="text-center p-2">
+                                        <i class="fas fa-camera text-slate-300 text-2xl mb-1"></i>
+                                        <p class="text-[10px] text-slate-400">Capture Cover</p>
+                                    </div>
+                                    <img id="image-preview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview">
+                                </label>
+                            </div>
+
+                            <div class="grid grid-cols-1 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Book ID / Number <span class="text-red-500">*</span></label>
+                                    <input type="text" id="book-id" required class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all" placeholder="e.g. LIB-9921">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Book Title</label>
+                                    <input type="text" id="book-title" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all" placeholder="The Great Gatsby">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-600 mb-2 uppercase tracking-wide">Category</label>
+                                    <select id="book-category" class="w-full px-5 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-4 focus:ring-blue-100 focus:border-blue-400 outline-none transition-all">
+                                        <option value="Fiction">Fiction</option>
+                                        <option value="Science">Science</option>
+                                        <option value="History">History</option>
+                                        <option value="Technology">Technology</option>
+                                        <option value="Biography">Biography</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-95">
+                                <i class="fas fa-save mr-2"></i> Save Book Data
+                            </button>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="issue-book" class="page-section max-w-xl mx-auto">
+                    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden">
+                        <div class="bg-slate-50 p-6 flex justify-between items-center border-b">
+                            <span id="step-indicator" class="bg-blue-100 text-blue-600 px-4 py-1 rounded-full text-xs font-bold uppercase">Step 1 of 3</span>
+                            <div class="flex gap-2">
+                                <div id="dot-1" class="w-2 h-2 rounded-full bg-blue-600"></div>
+                                <div id="dot-2" class="w-2 h-2 rounded-full bg-slate-200"></div>
+                                <div id="dot-3" class="w-2 h-2 rounded-full bg-slate-200"></div>
+                            </div>
+                        </div>
+
+                        <form id="issue-book-form" class="p-8 min-h-[400px] flex flex-col">
+                            
+                            <div id="step-1" class="step-container active">
+                                <h3 class="text-2xl font-bold mb-6">Scan Book Code</h3>
+                                <div class="space-y-4">
+                                    <label class="block text-slate-500 text-sm">Enter the unique identifier of the book</label>
+                                    <input type="text" id="issue-book-id" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none text-lg font-semibold" placeholder="Book ID">
+                                    <div id="book-validation-msg" class="text-sm"></div>
+                                </div>
+                            </div>
+
+                            <div id="step-2" class="step-container">
+                                <h3 class="text-2xl font-bold mb-6">Borrower Identity</h3>
+                                <div class="space-y-4">
+                                    <label class="block text-slate-500 text-sm">Enter Student Enrollment ID</label>
+                                    <input type="text" id="issue-student-id" class="w-full p-4 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-500 outline-none text-lg font-semibold" placeholder="Student ID">
+                                </div>
+                            </div>
+
+                            <div id="step-3" class="step-container">
+                                <h3 class="text-2xl font-bold mb-4">Complete Records</h3>
+                                <div class="space-y-4">
+                                    <input type="text" id="issue-student-name" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Full Name">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <input type="text" id="issue-student-class" class="p-4 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Class/Dept">
+                                        <input type="text" id="issue-student-roll" class="p-4 bg-slate-50 border border-slate-200 rounded-xl" placeholder="Roll Number">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mt-auto flex justify-between gap-4 pt-10">
+                                <button type="button" id="prev-btn" onclick="prevStep()" class="hidden px-6 py-3 text-slate-500 font-semibold hover:bg-slate-100 rounded-xl transition-all">Back</button>
+                                <button type="button" id="next-btn" onclick="nextStep()" class="ml-auto bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition-all">Continue <i class="fas fa-arrow-right ml-2 text-xs"></i></button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <section id="records" class="page-section">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold">Library Assets</h3>
+                            <p class="text-slate-500">Live database of all books and current borrowers</p>
+                        </div>
+                        <div class="flex gap-2 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                            <button onclick="toggleTable('books')" id="tab-books" class="px-6 py-2 rounded-lg font-bold text-sm transition-all bg-blue-600 text-white">Books Inventory</button>
+                            <button onclick="toggleTable('issued')" id="tab-issued" class="px-6 py-2 rounded-lg font-bold text-sm transition-all text-slate-500 hover:bg-slate-50">Issued Records</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                        <div class="p-6 border-b border-slate-50 flex flex-wrap gap-4 items-center justify-between">
+                            <div class="relative w-full max-w-xs">
+                                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                                <input type="text" id="record-search" onkeyup="filterRecords()" class="w-full pl-11 pr-4 py-2 bg-slate-50 border-none rounded-lg focus:ring-2 focus:ring-blue-100 outline-none" placeholder="Search records...">
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table id="books-table" class="w-full text-left border-collapse">
+                                <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase tracking-widest font-bold">
+                                    <tr>
+                                        <th class="px-6 py-4">Cover</th>
+                                        <th class="px-6 py-4">ID / Title</th>
+                                        <th class="px-6 py-4">Category</th>
+                                        <th class="px-6 py-4">Status</th>
+                                        <th class="px-6 py-4 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="books-list" class="divide-y divide-slate-100">
+                                    </tbody>
+                            </table>
+
+                            <table id="issued-table" class="w-full text-left border-collapse hidden">
+                                <thead class="bg-slate-50/50 text-slate-500 text-[10px] uppercase tracking-widest font-bold">
+                                    <tr>
+                                        <th class="px-6 py-4">Book Info</th>
+                                        <th class="px-6 py-4">Student Details</th>
+                                        <th class="px-6 py-4">Issue Date</th>
+                                        <th class="px-6 py-4 text-center">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="issued-list" class="divide-y divide-slate-100">
+                                    </tbody>
+                            </table>
+                        </div>
+
+                        <div id="empty-state" class="hidden flex flex-col items-center justify-center py-20 text-center">
+                            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                                <i class="fas fa-folder-open text-slate-300 text-3xl"></i>
+                            </div>
+                            <h4 class="text-slate-500 font-bold">No records found</h4>
+                            <p class="text-slate-400 text-sm">Add some data to get started!</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <footer class="mt-auto p-8 text-center">
+                <div class="inline-flex flex-col items-center">
+                    <p class="text-[10px] text-slate-400 uppercase tracking-[4px] mb-2">Designed & Developed By</p>
+                    <div class="bg-white px-6 py-3 rounded-full shadow-sm border border-slate-100 flex items-center gap-3">
+                        <span class="text-xl crown-glow">👑</span>
+                        <span class="font-black text-slate-800 tracking-tighter">ISUF <span class="text-blue-600">PRO</span></span>
+                    </div>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        /** * DATA STRUCTURE & STORAGE ENGINE 
+         * Encapsulates all interactions with LocalStorage
+         */
+        const LibraryDB = {
+            init() {
+                if (!localStorage.getItem('lib_books')) localStorage.setItem('lib_books', JSON.stringify([]));
+                if (!localStorage.getItem('lib_issued')) localStorage.setItem('lib_issued', JSON.stringify([]));
+            },
+            
+            getBooks() { return JSON.parse(localStorage.getItem('lib_books')); },
+            getIssued() { return JSON.parse(localStorage.getItem('lib_issued')); },
+
+            saveBook(book) {
+                const books = this.getBooks();
+                books.push(book);
+                localStorage.setItem('lib_books', JSON.stringify(books));
+            },
+
+            deleteBook(id) {
+                const books = this.getBooks().filter(b => b.id !== id);
+                localStorage.setItem('lib_books', JSON.stringify(books));
+            },
+
+            issueBook(record) {
+                const issued = this.getIssued();
+                issued.push(record);
+                localStorage.setItem('lib_issued', JSON.stringify(issued));
+            },
+
+            returnBook(bookId) {
+                const issued = this.getIssued().filter(r => r.bookId !== bookId);
+                localStorage.setItem('lib_issued', JSON.stringify(issued));
+            }
+        };
+
+        /**
+         * UI COMPONENTS & CONTROLLER
+         * Handles routing, form animations, and dynamic rendering
+         */
+        let currentStep = 1;
+
+        function showSection(sectionId) {
+            // Update UI Links
+            document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
+            document.getElementById(`nav-${sectionId}`).classList.add('active');
+
+            // Update Title
+            const titles = {
+                'dashboard': 'Dashboard Overview',
+                'add-book': 'Inventory Entry',
+                'issue-book': 'Distribution Portal',
+                'records': 'System Records'
+            };
+            document.getElementById('section-title').innerText = titles[sectionId];
+
+            // Toggle Sections
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            if (sectionId === 'dashboard') updateStats();
+            if (sectionId === 'records') renderTables();
+        }
+
+        // IMAGE PREVIEW HANDLER
+        function previewImage(event) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const output = document.getElementById('image-preview');
+                output.src = reader.result;
+                output.classList.remove('hidden');
+                document.getElementById('preview-placeholder').classList.add('hidden');
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+        // TOAST SYSTEM
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `animate__animated animate__fadeInRight px-6 py-4 rounded-2xl shadow-2xl mb-3 flex items-center gap-3 text-white font-bold ${type === 'success' ? 'bg-blue-600' : 'bg-red-500'}`;
+            toast.innerHTML = `
+                <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-triangle'}"></i>
+                <span>${message}</span>
+            `;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.replace('animate__fadeInRight', 'animate__fadeOutRight');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        }
+
+        // MULTI-STEP FORM NAVIGATION
+        function updateStep() {
+            document.querySelectorAll('.step-container').forEach(sc => sc.classList.remove('active'));
+            document.getElementById(`step-${currentStep}`).classList.add('active');
+            
+            document.getElementById('step-indicator').innerText = `Step ${currentStep} of 3`;
+            
+            // Update dots
+            [1, 2, 3].forEach(i => {
+                const dot = document.getElementById(`dot-${i}`);
+                dot.className = i <= currentStep ? 'w-2 h-2 rounded-full bg-blue-600' : 'w-2 h-2 rounded-full bg-slate-200';
+            });
+
+            document.getElementById('prev-btn').classList.toggle('hidden', currentStep === 1);
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.innerHTML = currentStep === 3 ? 'Confirm Issue <i class="fas fa-check ml-2"></i>' : 'Continue <i class="fas fa-arrow-right ml-2 text-xs"></i>';
+        }
+
+        function nextStep() {
+            if (currentStep < 3) {
+                // Basic Validation before next step
+                if (currentStep === 1 && !document.getElementById('issue-book-id').value) {
+                    return showToast("Book ID is required", "error");
+                }
+                if (currentStep === 2 && !document.getElementById('issue-student-id').value) {
+                    return showToast("Student ID is required", "error");
+                }
+                
+                currentStep++;
+                updateStep();
+            } else {
+                handleIssueSubmit();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStep();
+            }
+        }
+
+        // FORM SUBMISSION HANDLERS
+        document.getElementById('add-book-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newBook = {
+                id: document.getElementById('book-id').value,
+                title: document.getElementById('book-title').value || "Untitled Book",
+                category: document.getElementById('book-category').value,
+                image: document.getElementById('image-preview').src,
+                timestamp: new Date().toLocaleDateString()
+            };
+
+            // Check for duplicates
+            if (LibraryDB.getBooks().some(b => b.id === newBook.id)) {
+                return showToast("Book ID already exists!", "error");
+            }
+
+            LibraryDB.saveBook(newBook);
+            showToast("Book saved successfully!");
+            e.target.reset();
+            document.getElementById('image-preview').classList.add('hidden');
+            document.getElementById('preview-placeholder').classList.remove('hidden');
+            showSection('dashboard');
+        });
+
+        function handleIssueSubmit() {
+            const bookId = document.getElementById('issue-book-id').value;
+            const books = LibraryDB.getBooks();
+            const issued = LibraryDB.getIssued();
+
+            // Check if book exists
+            if (!books.find(b => b.id === bookId)) {
+                return showToast("Book not found in inventory!", "error");
+            }
+
+            // Check if already issued
+            if (issued.some(r => r.bookId === bookId)) {
+                return showToast("Book is already issued!", "error");
+            }
+
+            const record = {
+                bookId: bookId,
+                studentId: document.getElementById('issue-student-id').value,
+                studentName: document.getElementById('issue-student-name').value,
+                class: document.getElementById('issue-student-class').value,
+                roll: document.getElementById('issue-student-roll').value,
+                date: new Date().toLocaleDateString()
+            };
+
+            LibraryDB.issueBook(record);
+            showToast("Book issued successfully!");
+            document.getElementById('issue-book-form').reset();
+            currentStep = 1;
+            updateStep();
+            showSection('records');
+        }
+
+        // DASHBOARD LOGIC
+        function updateStats() {
+            const books = LibraryDB.getBooks();
+            const issued = LibraryDB.getIssued();
+            
+            animateCounter('stat-total-books', books.length);
+            animateCounter('stat-issued-books', issued.length);
+            animateCounter('stat-available-books', books.length - issued.length);
+        }
+
+        function animateCounter(id, target) {
+            const obj = document.getElementById(id);
+            let current = 0;
+            const duration = 1000;
+            const step = Math.ceil(target / (duration / 16));
+            
+            const timer = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    obj.innerText = target;
+                    clearInterval(timer);
+                } else {
+                    obj.innerText = current;
+                }
+            }, 16);
+        }
+
+        // RECORDS MANAGEMENT
+        function toggleTable(type) {
+            document.getElementById('tab-books').className = type === 'books' ? 'px-6 py-2 rounded-lg font-bold text-sm transition-all bg-blue-600 text-white' : 'px-6 py-2 rounded-lg font-bold text-sm transition-all text-slate-500 hover:bg-slate-50';
+            document.getElementById('tab-issued').className = type === 'issued' ? 'px-6 py-2 rounded-lg font-bold text-sm transition-all bg-blue-600 text-white' : 'px-6 py-2 rounded-lg font-bold text-sm transition-all text-slate-500 hover:bg-slate-50';
+            
+            document.getElementById('books-table').classList.toggle('hidden', type !== 'books');
+            document.getElementById('issued-table').classList.toggle('hidden', type !== 'issued');
+            renderTables();
+        }
+
+        function renderTables() {
+            const books = LibraryDB.getBooks();
+            const issued = LibraryDB.getIssued();
+            const booksList = document.getElementById('books-list');
+            const issuedList = document.getElementById('issued-list');
+            const emptyState = document.getElementById('empty-state');
+
+            booksList.innerHTML = '';
+            issuedList.innerHTML = '';
+
+            const isBooksVisible = !document.getElementById('books-table').classList.contains('hidden');
+
+            if (isBooksVisible) {
+                if (books.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    books.forEach(book => {
+                        const isIssued = issued.some(i => i.bookId === book.id);
+                        booksList.innerHTML += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <img src="${book.image.startsWith('data') ? book.image : 'https://via.placeholder.com/40x60?text=No+Cover'}" class="w-10 h-14 object-cover rounded shadow-sm">
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold text-slate-700">${book.title}</p>
+                                    <p class="text-[10px] font-mono text-slate-400">${book.id}</p>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-500">${book.category}</td>
+                                <td class="px-6 py-4">
+                                    <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${isIssued ? 'bg-orange-50 text-orange-600' : 'bg-green-50 text-green-600'}">
+                                        ${isIssued ? 'Issued' : 'Available'}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <button onclick="confirmDelete('${book.id}', 'book')" class="text-slate-300 hover:text-red-500 transition-colors">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            } else {
+                if (issued.length === 0) {
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    issued.forEach(rec => {
+                        issuedList.innerHTML += `
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <p class="font-bold text-slate-700">Code: ${rec.bookId}</p>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <p class="font-bold text-slate-700">${rec.studentName}</p>
+                                    <p class="text-xs text-slate-400">ID: ${rec.studentId} | Roll: ${rec.roll}</p>
+                                </td>
+                                <td class="px-6 py-4 text-sm text-slate-500">${rec.date}</td>
+                                <td class="px-6 py-4 text-center">
+                                    <button onclick="returnBook('${rec.bookId}')" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition-all">
+                                        Process Return
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            }
+        }
+
+        function confirmDelete(id, type) {
+            if (confirm(`Are you sure you want to delete this ${type}?`)) {
+                if (type === 'book') LibraryDB.deleteBook(id);
+                showToast("Record deleted", "error");
+                renderTables();
+            }
+        }
+
+        function returnBook(id) {
+            LibraryDB.returnBook(id);
+            showToast("Book returned to inventory");
+            renderTables();
+        }
+
+        function filterRecords() {
+            const val = document.getElementById('record-search').value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(val) ? '' : 'none';
+            });
+        }
+
+        // Initialize App
+        window.onload = () => {
+            LibraryDB.init();
+            updateStats();
+        };
+
+    </script>
 </body>
 </html>
